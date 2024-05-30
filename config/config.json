@@ -1,0 +1,21 @@
+{
+    "server": {
+        "host": "localhost",
+        "port": 29175
+    },
+    "connection": {
+        "maxRetries": 5,
+        "retryDelay": 1000
+    },
+    "userIcon":{
+        "width": 64,
+        "height": 64,
+        "compressImageMaxWidth" : 64,
+        "compressImageMaxHeight" : 64,
+        "compressImageQuality" : 0.8
+    },
+    "adviser":{
+        "type":"adviser_login",
+        "key":"DAQqFMg@Fb5mHqA"
+    }
+}

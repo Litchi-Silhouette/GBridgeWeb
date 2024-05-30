@@ -1,0 +1,139 @@
+/* src/screens/LoginInterface.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  max-width: 400px;
+  margin: auto;
+}
+
+.icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.tab-container {
+  display: flex;
+  width: 95%;
+  justify-content: space-evenly;
+  margin-bottom: 10px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid gray;
+  background: none;
+  cursor: pointer;
+}
+
+.tab.active-tab {
+  border-bottom: 2px solid blue;
+  color: blue;
+}
+
+.input {
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.link-button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: blue;
+  text-align: center;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.link-button:hover {
+  color: darkblue;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+input[type="checkbox"]+.label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  /* Center align the text with the checkbox */
+}
+
+input[type="checkbox"]+.label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+input[type="checkbox"]:checked+.label::before {
+  background-color: rgba(0, 123, 255, 0.8);
+  border: 1px solid rgba(0, 123, 255, 0.8);
+}
+
+input[type="checkbox"]+.label::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 45%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+}
+
+input[type="checkbox"]:checked+.label::after {
+  opacity: 1;
+}
+
+.label {
+  margin-left: 10px;
+}
+
+.button {
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: red;
+  margin-top: 10px;
+}

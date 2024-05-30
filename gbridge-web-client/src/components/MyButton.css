@@ -1,0 +1,86 @@
+.icon-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.icon-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 10px;
+}
+
+.icon-button.selected {
+    background-color: rgba(0, 123, 255, 0.6);
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.my-button {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.my-button.disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.my-button:hover:not(.disabled) {
+    opacity: 0.8;
+}
+
+.single-button {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    width: 30%;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.single-button.disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.single-button:hover:not(.disabled) {
+    opacity: 0.8;
+}
+
+.buttons-inline-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.ip-setting-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}

@@ -1,0 +1,41 @@
+.emailContainer {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.emailInput {
+    border: 1px solid gray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.usernameInput {
+    flex: 1;
+}
+
+.domainInput {
+    flex: 2;
+}
+
+.atSymbol {
+    font-size: 18px;
+    padding: 0 5px;
+}
+
+.codeContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.codeInput {
+    flex: 1;
+    margin-right: 10px;
+    border: 1px solid gray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
