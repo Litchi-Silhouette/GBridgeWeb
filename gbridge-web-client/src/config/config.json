@@ -1,0 +1,15 @@
+{
+    "proxy": {
+        "url" : "http://localhost:29176",
+        "common" : "/api/common",
+        "logout" : "/api/logout"
+    },
+    "userIcon":{
+        "width": 64,
+        "height": 64
+    },
+    "adviser":{
+        "type":"adviser_login",
+        "key":"DAQqFMg@Fb5mHqA"
+    }
+}

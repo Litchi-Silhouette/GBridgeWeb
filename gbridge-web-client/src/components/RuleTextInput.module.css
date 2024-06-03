@@ -1,0 +1,47 @@
+.container {
+    margin: 10px 0;
+    padding: 0;
+    width: 100%;
+    position: relative;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid gray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 50px;
+}
+
+.inputInvalid {
+    border-color: red;
+}
+
+.validIndicator {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    color: green;
+    font-size: 18px;
+}
+
+.invalidIndicator {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    color: red;
+    font-size: 18px;
+}
+
+.rules {
+    margin: 0;
+    margin-top: 5px;
+    background-color: #f8f8f8;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}

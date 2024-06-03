@@ -1,0 +1,57 @@
+/* src/screens/PersonalInfo.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    padding-top: 70px;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.rowContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-sizing: border-box;
+    width: 40%;
+    height: 100%;
+    margin: 0 20px;
+}
+
+.info {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.input {
+    width: 30%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}

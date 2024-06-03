@@ -1,0 +1,74 @@
+/* src/screens/ScoreInterface.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    padding-top: 70px;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.infoContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.leftContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 20px;
+    border-right: 1px solid #ddd;
+}
+
+.spinnerContainer {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.rightContainer {
+    flex: 2;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.info {
+    font-size: 16px;
+    color: #333;
+    padding: 0;
+    margin: 5px;
+}
+
+.suggestionBoard {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    margin: 20px;
+}
+
+.suggestionTitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.suggestion {
+    font-size: 14px;
+    color: grey;
+}

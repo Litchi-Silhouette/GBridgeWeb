@@ -1,0 +1,74 @@
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 0 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.leftSection {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.title {
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.middleSection {
+    display: flex;
+    justify-content: end;
+    flex-grow: 1;
+}
+
+.button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    width: 80px;
+    color: black;
+}
+
+.button.selected {
+    color: rgba(0, 123, 255, 0.8);
+}
+
+.buttonText {
+    font-size: 12px;
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+}
+
+.logoutButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+.logoutButton .buttonText {
+    font-size: 12px;
+}

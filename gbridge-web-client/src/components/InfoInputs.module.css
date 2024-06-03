@@ -1,0 +1,136 @@
+.emailContainer {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.emailInput {
+    border: 1px solid gray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.usernameInput {
+    flex: 1;
+}
+
+.domainInput {
+    flex: 2;
+}
+
+.atSymbol {
+    font-size: 18px;
+    padding: 0 5px;
+}
+
+.codeContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.codeInput {
+    flex: 1;
+    margin-right: 10px;
+    border: 1px solid gray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+/* InputStyles.css */
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+}
+
+.inputContainer {
+    margin: 10px;
+    width: 55%;
+    position: relative;
+}
+
+.input {
+    border: 1px solid gray;
+    padding-left: 5px;
+    border-radius: 5px;
+    /* Allow space for the check mark or cross */
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.inputInvalid {
+    border-color: red;
+    /* Highlight the border in red if invalid */
+}
+
+.validIndicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: green;
+    font-size: 18px;
+}
+
+.invalidIndicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: red;
+    font-size: 18px;
+}
+
+.prompt {
+    width: 25%;
+    font-size: 16px;
+}
+
+.label {
+    font-size: 16px;
+}
+
+.selectedContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.optionPrompt {
+    width: 25%;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.optionsContainer {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 55%;
+    box-sizing: border-box;
+}
+
+.option {
+    flex: 1;
+    background-color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin: 0;
+    padding: 5px 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.selectedOption {
+    background-color: rgba(0, 123, 255, 0.9);
+    color: white;
+}

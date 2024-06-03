@@ -1,14 +1,20 @@
 // src/screens/LoginInterface.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest, loginSuccess, loginFailure, toggleSaveAccount } from '../store/authSlice';
-import axios from 'axios';
+import {
+  loginRequest, loginSuccess, loginFailure,
+  sendCodeFailure, sendCodeRequest, sendCodeSuccess, reset
+} from '../store/authSlice';
+import { setPortrait, setCredentials, setAuthenticated, setSaveAccount, toggleSaveAccount } from '../store/globalSlice';
+import { useAxios } from '../utils/AxiosContext';
 import DefaultUserIcon from '../assets/default_user_icon.png';
-import './LoginInterface.css';
-import { SingleButton } from '../components/MyButton';
-import { EmailInput, VerificationCodeInput } from '../components/InfoInputs';
-import Spinner from '../components/Spinner';
+import config from '../config/config.json';
+import styles from './LoginInterface.module.css';
+import { SingleButton } from './MyButton';
+import { EmailInput, VerificationCodeInput } from './InfoInputs';
+import Spinner from './Spinner';
+import { saveToLocalStorage, getFromLocalStorage, removeFromLocalStorage } from '../utils/localStorageUtils';
 
 const LoginInterface = () => {
   const [activeTab, setActiveTab] = useState('username'); // Can be 'email' or 'username'
@@ -18,11 +24,71 @@ const LoginInterface = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  const [isCodeSent, setIsCodeSent] = useState(false);
 
-  const { isLoading, error, saveAccount } = useSelector((state) => state.auth);
+  const { isLoading, error, isCodeSent } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { portrait, saveAccount } = useSelector((state) => state.global);
+  const axios = useAxios();
+
+  useEffect(() => {
+    const saveAccount = getFromLocalStorage('saveAccount');
+    dispatch(setSaveAccount(saveAccount));
+
+    if (saveAccount) {
+      const username = getFromLocalStorage('username');
+      const password = getFromLocalStorage('password');
+      const portrait = getFromLocalStorage('portrait');
+      dispatch(setCredentials({ username, password }));
+      dispatch(setPortrait(portrait));
+      setPassword(password);
+      setUsername(username);
+    }
+
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch]);
+
+  const updateUserInfo = async () => {
+    try {
+      const response = await axios.post(config.proxy.common, {
+        type: "get_user_info",
+        content: [
+          "portrait",
+          "username",
+          "password",
+          "authenticated"
+        ],
+        extra: null
+      });
+
+      if (response.data.success) {
+        const { portrait, username, password, authenticated } = response.data.content;
+        dispatch(setPortrait(portrait));
+        dispatch(setCredentials({ username, password }));
+        dispatch(setAuthenticated(authenticated));
+        saveToLocalStorage('saveAccount', saveAccount);
+
+        if (saveAccount) {
+          saveToLocalStorage('username', username);
+          saveToLocalStorage('password', password);
+          saveToLocalStorage('portrait', portrait);
+        }
+        else {
+          removeFromLocalStorage('username');
+          removeFromLocalStorage('password');
+          removeFromLocalStorage('portrait');
+        }
+        dispatch(loginSuccess(response.data.user));
+        navigate('/home', { replace: true });
+      } else {
+        dispatch(loginFailure('Invalid user.'));
+      }
+    } catch (error) {
+      dispatch(loginFailure('Thrive user info failed. Please try again.'));
+    }
+  };
 
   const handleLogin = async () => {
     let email = `${emailName}@${emailDomain}`;
@@ -40,9 +106,8 @@ const LoginInterface = () => {
 
     if (type !== '') {
       dispatch(loginRequest());
-
       try {
-        const response = await axios.post('http://localhost:3000/api/login', {
+        const response = await axios.post(config.proxy.common, {
           type: 'login',
           content: {
             email,
@@ -55,8 +120,7 @@ const LoginInterface = () => {
         });
 
         if (response.data.success) {
-          dispatch(loginSuccess(response.data.user));
-          navigate('/dummy?target=/home', { replace: true });
+          updateUserInfo();
         } else {
           dispatch(loginFailure('Invalid credentials'));
         }
@@ -79,23 +143,23 @@ const LoginInterface = () => {
     }
 
     if ((email && activeTab === 'email') || (username && activeTab === 'username')) {
-      dispatch(loginRequest());
+      dispatch(sendCodeRequest());
 
       try {
-        const response = await axios.post('http://localhost:3000/api/send_verification_code', {
+        const response = await axios.post(config.proxy.common, {
           type: 'get_verificationcode',
           content,
           extra: null,
         });
 
         if (response.data.success) {
-          setIsCodeSent(true);
+          dispatch(sendCodeSuccess());
           alert('Verification code sent. Please check your mailbox.');
         } else {
-          dispatch(loginFailure('Failed to send verification code. Please try again.'));
+          dispatch(sendCodeFailure('Failed to send verification code. Please try again.'));
         }
       } catch (error) {
-        dispatch(loginFailure('Failed to send verification code. Please try again.'));
+        dispatch(sendCodeFailure('Failed to send verification code. Please try again.'));
       }
     } else {
       alert(`Please enter your ${activeTab}`);
@@ -103,17 +167,17 @@ const LoginInterface = () => {
   };
 
   return (
-    <div className="container">
-      <img src={DefaultUserIcon} alt="User Icon" className="icon" />
-      <div className="tab-container">
+    <div className={styles.container}>
+      <img src={portrait || DefaultUserIcon} alt="User Icon" className={styles.icon} />
+      <div className={styles.tabContainer}>
         <button
-          className={`tab ${activeTab === 'username' ? 'active-tab' : ''}`}
+          className={[styles.tab, activeTab === 'username' ? styles.activeTab : ''].join(' ')}
           onClick={() => setActiveTab('username')}
         >
           Username
         </button>
         <button
-          className={`tab ${activeTab === 'email' ? 'active-tab' : ''}`}
+          className={[styles.tab, activeTab === 'email' ? styles.activeTab : ''].join(' ')}
           onClick={() => setActiveTab('email')}
         >
           Email
@@ -130,7 +194,7 @@ const LoginInterface = () => {
         />
       ) : (
         <input
-          className="input"
+          className={styles.input}
           type="text"
           placeholder="Username"
           value={username}
@@ -146,38 +210,38 @@ const LoginInterface = () => {
             onCodeChange={setVerificationCode}
             disabled={isLoading || isCodeSent}
           />
-          <button className="link-button" onClick={() => setActiveVerification('password')}>
+          <button className={styles.linkButton} onClick={() => setActiveVerification('password')}>
             Login with Password
           </button>
         </>
       ) : (
         <>
           <input
-            className="input"
+            className={styles.input}
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
           />
-          <button className="link-button" onClick={() => setActiveVerification('verification code')}>
+          <button className={styles.linkButton} onClick={() => setActiveVerification('verification code')}>
             Login with Verification Code
           </button>
         </>
       )}
 
-      <div className="checkbox-container">
+      <div className={styles.checkboxContainer}>
         <input
           type="checkbox"
           id="customCheckbox"
           checked={saveAccount}
           onChange={() => dispatch(toggleSaveAccount())}
         />
-        <label htmlFor="customCheckbox" className="label">Save Account</label>
+        <label htmlFor="customCheckbox" className={styles.label}>Save Account</label>
       </div>
       <SingleButton title="Login" onPress={handleLogin} disable={isLoading} />
       {isLoading && <Spinner size="small" color="#0000ff" />}
-      {error && <p className="error-text">{error}</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
     </div>
   );
 };
