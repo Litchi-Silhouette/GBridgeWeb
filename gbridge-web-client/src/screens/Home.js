@@ -1,7 +1,7 @@
 // src/screens/Home.js
 import React, { useState, useEffect } from 'react';
 import { useAxios } from '../utils/AxiosContext';
-import { differenceInDays, addDays } from 'date-fns';
+import { differenceInDays, addDays, set } from 'date-fns';
 import parseItems from '../utils/ParseItem';// Import the CSS module
 import { useSelector } from 'react-redux';
 import config from '../config/config.json';
@@ -69,10 +69,7 @@ const Home = () => {
 
   useEffect(() => {
     getScore();
-    fetchLoans().catch((error) => {
-      setLoading(false);
-      alert(`Failed to connect to server: ${error.message}`);
-    });
+    setTimeout(() => fetchLoans(), 1000);
   }, []);
 
   const getScore = async () => {

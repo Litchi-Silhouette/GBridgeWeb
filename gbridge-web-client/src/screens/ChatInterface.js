@@ -193,25 +193,22 @@ const AdviserChatInterface = () => {
     const [isLoading, setIsLoading] = useState(false);
     const axios = useAxios();
     const chatRef = useRef(null);
-    let interval = useRef(null);
+    const interval = useRef(null);
 
     useEffect(() => {
         console.log("mounted AdviserChatInterface!");
-        const startApp = async () => {
-            await fetchAdvisorMessages();
-            interval.current = setInterval(async () => {
-                await fetchAdvisorMessages();
-            }, 5000);
-        };
-        if (interval.current === null && messages.length === 0)
-            startApp();
+
+        if (interval.current) clearInterval(interval.current);
+        interval.current = setInterval(fetchAdvisorMessages, 3000);
+        fetchAdvisorMessages();
 
         return () => {
             console.log("unmounted AdviserChatInterface!");
             clearInterval(interval.current);
             interval.current = null;
-        }
+        };
     }, []);
+
 
 
     const fetchAdvisorMessages = async () => {
@@ -221,22 +218,21 @@ const AdviserChatInterface = () => {
         })
         const response = orgResponse.data;
         if (response.success) {
-            console.log("fetched messages from adviser!", response.content.length, messages.length);
-            if (response.content && response.content.length > messages.length) {
-                const newMessages = response.content.slice(messages.length).map((message, index) => {
+            let length = messages.length;
+            setMessages(prevMessages => { length = prevMessages.length; return prevMessages });
+            console.log("fetched messages from adviser!", response.content.length, length);
+            if (response.content && response.content.length > length) {
+                const newMessages = response.content.slice(length).map((message, index) => {
                     const timeAll = new Date(message.time);
                     return {
-                        id: index + 1 + messages.length,
+                        id: index + 1 + length,
                         date: timeAll.toLocaleDateString(),
                         time: timeAll.toLocaleTimeString(),
                         text: message.msg,
                         user: message.role === 'user' ? "You" : "Adviser"
                     };
                 });
-                setMessages(prevMessages => {
-                    console.log("prevMessages", prevMessages.length);
-                    return [...prevMessages, ...newMessages]
-                });
+                setMessages(prevMessages => [...prevMessages, ...newMessages]);
                 chatRef.current?.scrollToEnd();
             }
         } else
