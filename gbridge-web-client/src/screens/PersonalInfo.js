@@ -6,7 +6,7 @@ import styles from './PersonalInfo.module.css'; // Import the CSS module
 import { useSelector } from 'react-redux';
 import Spinner from '../components/Spinner';
 import { NumberInput, YesNoChoice } from '../components/InfoInputs';
-import ImageCropModal from '../components/ImageCropModal';
+import { ImageCropModal } from '../components/ImageCropModal';
 import { useDispatch } from 'react-redux';
 import { setPortrait, setAuthenticated } from '../store/globalSlice';
 import { saveToLocalStorage, getFromLocalStorage } from '../utils/localStorageUtils';
@@ -36,19 +36,11 @@ const PersonalInfo = () => {
     const [idNumber, setIdNumber] = useState('');
     const [verificationStatus, setVerificationStatus] = useState('');
     const [view, setView] = useState('info');  // ['info', 'verification', 'modification'
-    const username = useSelector(state => {
-        console.log(state.global);
-        return state.global.username;
-    });
+    const username = useSelector(state => state.global.username);
     const userIcon = useSelector(state => state.global.portrait);
     const verified = useSelector(state => state.global.authenticated);
     const dispatch = useDispatch();
     const axios = useAxios();
-
-    useEffect(() => {
-        fetchUserData();
-        console.log(username);
-    }, []);
 
     const fetchUserData = async () => {
         setState(prevState => ({ ...prevState, loading: true }));
@@ -100,6 +92,11 @@ const PersonalInfo = () => {
             setState(prevState => ({ ...prevState, loading: false }));
         }
     };
+
+    useEffect(() => {
+        console.log('PersonalInfo mounted');
+        fetchUserData();
+    }, []);
 
     const handleVerificationPress = () => {
         setView('verification');
@@ -237,8 +234,9 @@ const PersonalInfo = () => {
     const renderModification = () => {
         return (
             <>
-                <img src={newIcon || userIcon || DefaultUserIcon} alt="User Icon" className={styles.icon} />
-                <ImageCropModal onConfirm={setImage} />
+                <ImageCropModal onConfirm={setImage} icon={
+                    <img src={newIcon || userIcon || DefaultUserIcon} alt="User Icon" className={styles.icon} />
+                } />
                 <div className={styles.rowContainer}>
                     <div className={styles.infoContainer}>
                         <NumberInput iniValue={cash?.toString() || "null"} prompt="Cash" updateValue={(value) => setState(prevState => ({ ...prevState, cash: value, cashValid: value !== null }))} />
@@ -295,7 +293,7 @@ const PersonalInfo = () => {
         else if (view === 'verification') {
             return (
                 <TwoButtonsInline
-                    title1="Confirm" title2="Cancel"
+                    title1={isLoading ? <Spinner size='minor' /> : "Confirm"} title2="Cancel"
                     onPress1={uploadIDDocuments} onPress2={clearIDAndBack}
                     disable1={verified} disable2={false} />
             )
@@ -303,7 +301,7 @@ const PersonalInfo = () => {
         else if (view === 'modification') {
             return (
                 <TwoButtonsInline
-                    title1="Confirm" title2="Cancel"
+                    title1={isLoading ? <Spinner size='minor' /> : "Confirm"} title2="Cancel"
                     onPress1={handleModification} onPress2={() => setView('info')}
                     disable1={false} disable2={false} />
             )
@@ -317,7 +315,6 @@ const PersonalInfo = () => {
             {view === 'verification' && renderVerification()}
             {view === 'modification' && renderModification()}
             {renderButton()}
-            {isLoading && <Spinner size='small' />}
         </div>
     );
 };

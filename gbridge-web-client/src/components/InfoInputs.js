@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './InfoInputs.module.css';
 import { MyButton } from './MyButton';
 
@@ -45,9 +45,17 @@ class EmailInput extends React.Component {
     }
 }
 
-const NumberInput = ({ iniValue, prompt, tail, updateValue }) => {
+const NumberInput = forwardRef(({ iniValue, prompt, updateValue, tail, ...rest }, ref) => {
     const [input, setInput] = useState(iniValue);
     const [isValid, setIsValid] = useState(true);
+
+    useImperativeHandle(ref, () => ({
+        changeInitialValue(value) {
+            setInput(value);
+            setIsValid(true);
+            updateValue(value);
+        },
+    }));
 
     const handleInputChange = (text) => {
         setInput(text);
@@ -65,7 +73,7 @@ const NumberInput = ({ iniValue, prompt, tail, updateValue }) => {
             <label className={styles.prompt}>{prompt}:</label>
             <div className={styles.inputContainer}>
                 <input
-                    type="text"
+                    type="number"
                     className={`${styles.input} ${!isValid && input.length > 0 ? styles.inputInvalid : ''}`}
                     value={input}
                     placeholder={iniValue}
@@ -80,10 +88,17 @@ const NumberInput = ({ iniValue, prompt, tail, updateValue }) => {
             {tail && <span className={styles.label}>{tail}</span>}
         </div>
     );
-};
+});
 
-const LabelInput = ({ iniValue, prompt, tail, updateValue }) => {
+const LabelInput = forwardRef(({ iniValue, prompt, updateValue, tail, ...rest }, ref) => {
     const [input, setInput] = useState(iniValue);
+
+    useImperativeHandle(ref, () => ({
+        changeInitialValue(value) {
+            setInput(value);
+            updateValue(value);
+        },
+    }));
 
     const handleInputChange = (text) => {
         setInput(text);
@@ -105,7 +120,7 @@ const LabelInput = ({ iniValue, prompt, tail, updateValue }) => {
             {tail && <span className={styles.label}>{tail}</span>}
         </div>
     );
-};
+});
 
 const YesNoChoice = ({ prompt, updateValue, iniValue }) => {
     const [selectedOption, setSelectedOption] = useState(iniValue);

@@ -152,7 +152,8 @@ app.post('/api/common', (req, res) => {
 
 app.post('/api/logout', (req, res) => {
   const sessionId = req.sessionID;
-  userConnections[sessionId].client.destroy();
+  if (userConnections[sessionId] && userConnections[sessionId].client)
+    userConnections[sessionId].client.destroy();
 
   req.session.destroy(err => {
     if (err) {
@@ -169,6 +170,7 @@ setInterval(() => {
   const timeout = 30 * 60 * 1000; // 30 minutes
 
   for (const sessionId in userConnections) {
+    console.log(`Checking session ID: ${sessionId}`, now - userConnections[sessionId].lastActive);
     if (now - userConnections[sessionId].lastActive > timeout) {
       console.log(`Cleaning up inactive session ID: ${sessionId}`);
       userConnections[sessionId].client.destroy();

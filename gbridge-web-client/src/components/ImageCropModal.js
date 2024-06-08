@@ -5,8 +5,30 @@ import Modal from 'react-modal';
 import styles from './ImageCropModal.module.css';
 import { TwoButtonsInline, TextButton } from './MyButton';
 import config from '../config/config.json';
+import DefaultUserIcon from '../assets/default_user_icon.png';
 
-const ImageCropModal = ({ onConfirm }) => {
+const ImagePicker = ({ onConfirm }) => {
+    const pickCropImage = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => onConfirm(reader.result);
+                reader.onerror = error => console.error('Error: ', error);
+            }
+        };
+        input.click();
+    };
+    return (
+        <TextButton title={'Upload Extra Info'} onPress={pickCropImage} />
+    );
+}
+
+const ImageCropModal = ({ onConfirm, icon }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [src, setSrc] = useState(null);
     const [crop, setCrop] = useState({
@@ -97,8 +119,8 @@ const ImageCropModal = ({ onConfirm }) => {
 
     return (
         <>
-            {!src && <TextButton title={'Change Icon'} onPress={pickCropImage} />}
-            {src && (
+            <TextButton title={icon} onPress={pickCropImage} />
+            {modalVisible && (
                 <Modal
                     isOpen={modalVisible}
                     onRequestClose={() => setModalVisible(false)}
@@ -140,4 +162,4 @@ const ImageCropModal = ({ onConfirm }) => {
     );
 };
 
-export default ImageCropModal;
+export { ImageCropModal, ImagePicker };

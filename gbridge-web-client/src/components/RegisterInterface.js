@@ -168,15 +168,13 @@ const RegisterInterface = () => {
                         <label htmlFor="customCheckbox" className={styles.label}>Accept Terms and Conditions</label>
                         <button className={styles.linkButton} onClick={() => setModalVisible(true)}>View Terms</button>
                     </div>
-                    <SingleButton title="Register" onPress={handleRegister} disable={isLoading || !acceptTerms || !passwordValid || !usernameValid} />
+                    <SingleButton title={isLoading ? <Spinner size="minor" /> : "Register"} onPress={handleRegister} disable={isLoading || !acceptTerms || !passwordValid || !usernameValid} />
                 </>
             )}
 
             {!isCodeSent && (
                 <MyButton title="Send Verification Code" onPress={sendVerificationCode} disable={isLoading || isCodeSent} />
             )}
-
-            {isLoading && <Spinner size="small" color="#0000ff" />}
             {error && <p className={styles.errorText}>{error}</p>}
         </div>
     );

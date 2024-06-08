@@ -239,8 +239,7 @@ const LoginInterface = () => {
         />
         <label htmlFor="customCheckbox" className={styles.label}>Save Account</label>
       </div>
-      <SingleButton title="Login" onPress={handleLogin} disable={isLoading} />
-      {isLoading && <Spinner size="small" color="#0000ff" />}
+      <SingleButton title={isLoading ? <Spinner size="minor" /> : "Login"} onPress={handleLogin} disable={isLoading} />
       {error && <p className={styles.errorText}>{error}</p>}
     </div>
   );

@@ -1,22 +1,14 @@
 /* src/screens/NotificationBoard.module.css */
 .container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    background-color: rgba(250, 250, 250, 0.6);
+    padding: 10px;
+    padding-top: 70px;
     width: 100%;
-    min-height: 100vh;
-}
-
-.modalView {
-    margin: 15px;
-    background-color: white;
-    border-radius: 20px;
-    padding: 20px;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-    width: 80%;
-    max-width: 800px;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .modalTitle {
@@ -31,6 +23,30 @@
     font-weight: bold;
     margin: 5px;
     text-align: center;
+}
+
+.top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 10px;
+}
+
+.icon {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+}
+
+.topContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .itemContainer {
@@ -51,23 +67,6 @@
     font-size: 16px;
 }
 
-.modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1002;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
-}
-
 .row {
     display: flex;
     justify-content: space-between;
@@ -79,10 +78,10 @@
     margin: 0 10px;
 }
 
-.buttonContainer {
-    margin-top: 20px;
+.emptyContainer {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .listContainer {

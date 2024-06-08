@@ -1,0 +1,113 @@
+/* ChatInterface.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    padding-top: 70px;
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.chatBox {
+    flex: 1;
+    border: 1px solid #ccc;
+    width: 100%;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.chatBox::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+}
+
+.messageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: flex-end;
+}
+
+.userMessage {
+    display: flex;
+    flex-direction: row-reverse;
+    align-self: self-end;
+}
+
+.responseMessage {
+    display: flex;
+    flex-direction: row;
+    align-self: self-start;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.messageText {
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.userMessage .messageText {
+    background-color: #99ccff;
+}
+
+.infoText {
+    font-size: 10px;
+    padding: 0 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.userText {
+    text-align: right;
+}
+
+.responseText {
+    text-align: left;
+}
+
+.timeText {
+    font-size: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.inputContainer {
+    display: flex;
+    width: 100%;
+    padding: 10px 10px 10px 0;
+    margin: 0;
+    align-items: center;
+    box-sizing: border-box;
+}

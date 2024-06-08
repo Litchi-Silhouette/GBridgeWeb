@@ -5,8 +5,9 @@ import { TwoButtonsInline, TextButton } from '../components/MyButton';
 import Spinner from '../components/Spinner';
 import Header from '../components/Header';
 import config from '../config/config.json';
+import { useNavigate } from 'react-router-dom';
 
-const ScoreInterface = ({ navigation }) => {
+const ScoreInterface = () => {
     const [score, setScore] = useState(null);
     const [info, setInfo] = useState(null);
     const [suggestion, setSuggestion] = useState('Waiting for suggestions');
@@ -14,6 +15,7 @@ const ScoreInterface = ({ navigation }) => {
     const [loadingScore, setLoadingScore] = useState(true);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const axios = useAxios();
+    const navigate = useNavigate();
 
     useEffect(() => {
         getScore();
@@ -85,6 +87,7 @@ const ScoreInterface = ({ navigation }) => {
                 setLoadingSuggestions(false);
             } else {
                 alert("Failed to retrieve suggestions.");
+                setLoadingSuggestions(false);
             }
         } catch (error) {
             alert("Failed to retrieve suggestions.");
@@ -137,8 +140,8 @@ const ScoreInterface = ({ navigation }) => {
             <TwoButtonsInline
                 title1="Ask GPT"
                 title2="Ask professional"
-                onPress1={() => navigation.navigate('BotChat')}
-                onPress2={() => navigation.navigate('AdviserChat')}
+                onPress1={() => navigate('/botChat', { replace: true })}
+                onPress2={() => navigate('/adviserChat', { replace: true })}
                 disable1={false}
                 disable2={false}
             />

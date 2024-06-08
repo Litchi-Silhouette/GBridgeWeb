@@ -18,10 +18,6 @@ const WelcomeInterface = () => {
         setView('register');
     };
 
-    const handleAdviser = () => {
-        navigate('/adviser', { replace: true });
-    };
-
     const handleBack = () => {
         setView('welcome');
     }
@@ -40,7 +36,6 @@ const WelcomeInterface = () => {
                             <>
                                 <SingleButton title="Login" onPress={handleLoginPress} />
                                 <SingleButton title="Register" onPress={handleRegisterPress} />
-                                <SingleButton title="Continue as Adviser" onPress={handleAdviser} />
                             </>
                         )}
                         {view === 'login' && <LoginInterface />}

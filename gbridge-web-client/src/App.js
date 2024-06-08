@@ -8,6 +8,7 @@ import UserRequests from './screens/UserRequests';
 import MarketComponent from './screens/MarketComponent';
 import ScoreInterface from './screens/ScoreInterface';
 import PersonalInfo from './screens/PersonalInfo';
+import { BotChatInterface, AdviserChatInterface } from './screens/ChatInterface';
 
 const App = () => {
   return (
@@ -20,6 +21,8 @@ const App = () => {
           <Route path="/market" element={<MarketComponent />} />
           <Route path="/score" element={<ScoreInterface />} />
           <Route path="/personalInfo" element={<PersonalInfo />} />
+          <Route path="/botChat" element={<BotChatInterface />} />
+          <Route path="/adviserChat" element={<AdviserChatInterface />} />
         </Routes>
       </Router>
     </AxiosProvider>
