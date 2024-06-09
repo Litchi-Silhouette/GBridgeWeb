@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RequestDetail from '../components/RequestDetail';
 import parseItems from '../utils/ParseItem';
 import InputModal from '../components/InputModal';
-import styles from './Cart.module.css'; // Import CSS module
+import styles from './Cart.module.css';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../utils/AxiosContext';
 import Spinner from '../components/Spinner';
@@ -26,56 +26,10 @@ const CartInterface = ({ navigateToPost }) => {
         fetchRequests();
     }, []);
 
+    // handling control logic
     const switchTab = (tab) => {
         if (tab !== type) {
             setType(tab);
-        }
-    };
-
-    const fetchRequests = async () => {
-        setDeals({ loan: [], invest: [] });
-        setPosts({ loan: [], invest: [] });
-        setLoading(true);
-        try {
-            const postOrgResponse = await axios.post(config.proxy.common, {
-                type: 'get_user_posts',
-                content: null,
-                extra: null
-            });
-            const postResponse = postOrgResponse.data;
-
-            if (postResponse.success) {
-                let items = parseItems(postResponse.content);
-                items = items.map(item => ({ ...item, status: 'Post' }));
-                const loanPosts = items.filter(req => req.post_type === 'borrow');
-                const investmentPosts = items.filter(req => req.post_type === 'lend');
-                setPosts({ loan: loanPosts, invest: investmentPosts });
-
-                const dealOrgResponse = await axios.post(config.proxy.common, {
-                    type: 'get_user_deals',
-                    content: null,
-                    extra: null
-                });
-
-                const dealResponse = dealOrgResponse.data;
-                if (dealResponse.success) {
-                    items = parseItems(dealResponse.content);
-                    items = items.map(item => ({ ...item, status: 'Deal' }));
-                    const loanDeals = items.filter(req => req.borrower_username === gUsername);
-                    const investmentDeals = items.filter(req => req.lender_username === gUsername);
-                    setDeals({ loan: loanDeals, invest: investmentDeals });
-                    setLoading(false);
-                } else {
-                    alert('Failed to fetch deals.');
-                    setLoading(false);
-                }
-            } else {
-                alert('Failed to fetch posts.');
-                setLoading(false);
-            }
-        } catch {
-            alert('Failed to fetch posts.');
-            setLoading(false);
         }
     };
 
@@ -89,28 +43,6 @@ const CartInterface = ({ navigateToPost }) => {
         setShowModal(false);
     };
 
-    const deleteRequest = async () => {
-        try {
-            const response = await axios.post(config.proxy.common, {
-                type: 'withdraw_market_post',
-                content: {
-                    _id: selectedRequest._id
-                },
-                extra: null
-            });
-
-            if (response.data.success) {
-                alert('Request deleted successfully.');
-                handleModalClose();
-                fetchRequests();
-            } else {
-                alert('Failed to delete request.');
-            }
-        } catch {
-            alert('Failed to delete request.');
-        }
-    };
-
     const repayRequest = () => {
         setShowModal(false);
         setView('repay');
@@ -118,28 +50,6 @@ const CartInterface = ({ navigateToPost }) => {
 
     const remindRequest = () => {
         setReminderModal(true);
-    };
-
-    const handleReminder = async (message) => {
-        const { selectedRequest } = this.state;
-        try {
-            const response = await axios.post(config.proxy.common, {
-                type: 'send_notification',
-                content: {
-                    receiver: selectedRequest.borrower_username,
-                    content: message
-                },
-                extra: null
-            });
-            if (response.data.success) {
-                alert('Message sent successfully.');
-            } else {
-                alert('Failed to send message.');
-            }
-        } catch {
-            alert('Failed to send message.');
-        }
-        handleReminderModalClose();
     };
 
     const handleReminderModalClose = () => {
@@ -163,6 +73,97 @@ const CartInterface = ({ navigateToPost }) => {
         };
     };
 
+    // Fetch user posts and deals
+    const fetchRequests = async () => {
+        setDeals({ loan: [], invest: [] });
+        setPosts({ loan: [], invest: [] });
+        setLoading(true);
+        try {
+            // Fetch user posts
+            const postOrgResponse = await axios.post(config.proxy.common, {
+                type: 'get_user_posts',
+                content: null,
+                extra: null
+            });
+            const postResponse = postOrgResponse.data;
+
+            if (postResponse.success) {
+                let items = parseItems(postResponse.content);
+                items = items.map(item => ({ ...item, status: 'Post' }));
+                const loanPosts = items.filter(req => req.post_type === 'borrow');
+                const investmentPosts = items.filter(req => req.post_type === 'lend');
+                setPosts({ loan: loanPosts, invest: investmentPosts });
+
+                // Fetch user deals
+                const dealOrgResponse = await axios.post(config.proxy.common, {
+                    type: 'get_user_deals',
+                    content: null,
+                    extra: null
+                });
+
+                const dealResponse = dealOrgResponse.data;
+                if (dealResponse.success) {
+                    items = parseItems(dealResponse.content);
+                    items = items.map(item => ({ ...item, status: 'Deal' }));
+                    const loanDeals = items.filter(req => req.borrower_username === gUsername);
+                    const investmentDeals = items.filter(req => req.lender_username === gUsername);
+                    setDeals({ loan: loanDeals, invest: investmentDeals });
+                    setLoading(false);
+                } else
+                    throw new Error();
+            } else
+                throw new Error();
+        } catch {
+            alert('Failed to fetch posts.');
+            setLoading(false);
+        }
+    };
+
+    // Handle delete request
+    const deleteRequest = async () => {
+        try {
+            const response = await axios.post(config.proxy.common, {
+                type: 'withdraw_market_post',
+                content: {
+                    _id: selectedRequest._id
+                },
+                extra: null
+            });
+
+            if (response.data.success) {
+                alert('Request deleted successfully.');
+                handleModalClose();
+                fetchRequests();
+            } else
+                throw new Error();
+        } catch {
+            alert('Failed to delete request.');
+        }
+    };
+
+    // Handle remind request
+    const handleReminder = async (message) => {
+        const { selectedRequest } = this.state;
+        try {
+            const response = await axios.post(config.proxy.common, {
+                type: 'send_notification',
+                content: {
+                    receiver: selectedRequest.borrower_username,
+                    content: message
+                },
+                extra: null
+            });
+            if (response.data.success) {
+                alert('Message sent successfully.');
+            } else
+                throw new Error();
+        } catch {
+            alert('Failed to send message.');
+        }
+        handleReminderModalClose();
+    };
+
+    // Render functions
     const renderRequest = (item) => (
         <div className={styles.requestItem} onClick={() => handleAction(item)}>
             <p className={styles.itemText}>
@@ -177,6 +178,7 @@ const CartInterface = ({ navigateToPost }) => {
             {loading ? <Spinner size='medium' /> : <p>No request available</p>}
         </div>
     );
+
     if (view === 'repay')
         return <RepayInterface loanDetail={selectedRequest} goBack={(change) => {
             if (change)
@@ -184,6 +186,7 @@ const CartInterface = ({ navigateToPost }) => {
             setSelectedRequest(null);
             setView('cart')
         }} />;
+
     return (
         <>
             <div className={styles.tabContainer}>

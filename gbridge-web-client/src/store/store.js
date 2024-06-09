@@ -1,4 +1,3 @@
-// src/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
 import globalReducer from './globalSlice';

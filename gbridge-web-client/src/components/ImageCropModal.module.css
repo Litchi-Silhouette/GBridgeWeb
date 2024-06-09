@@ -1,4 +1,3 @@
-/* src/components/ImageCropModal.module.css */
 .overlay {
     position: fixed;
     top: 0;
@@ -15,7 +14,6 @@
 .modal {
     display: flex;
     flex-direction: column;
-    /* Allows modal content to flow vertically */
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -31,7 +29,6 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     z-index: 1002;
-    /* Prevents content from overflowing outside the modal */
 }
 
 .modalContent {
@@ -40,9 +37,7 @@
     align-items: center;
     width: 100%;
     overflow-y: auto;
-    /* Enables vertical scrolling if content exceeds modal height */
     flex-grow: 1;
-    /* Ensures modal content takes up available height */
 }
 
 .modalTitle {

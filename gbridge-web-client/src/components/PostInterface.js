@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-    TextField, MenuItem, Select, InputLabel, FormControl, Alert
+    TextField, MenuItem, Select, InputLabel, FormControl
 } from '@mui/material';
 import { useAxios } from '../utils/AxiosContext';
 import InputModal from '../components/InputModal';
@@ -34,13 +34,16 @@ const PostInterface = ({ post_type, goBack }) => {
     const interestRef = useRef(null);
     const periodRef = useRef(null);
     const axios = useAxios();
+
+    // prompt for the user to get advice from GPT
     const prompt = "Supposing you are an expert in financial consulting, now you are asked to suggest the user a certain " + post_type + " post.\n" +
         "Your response should be a single json:{\"amount\":Number,\"interest\":Number,\"period\":Number, \"loanType\":String,\"description\":String}\nThe unit of amount is $, it is a positive number.\nThe unit of interest is yearly interest rate, it is a float number between 0 to 1.\nThe unit of period is months, it is a positive integer.\nThere are altogether 3 types of loan: \"Full Payment\", \"Interest-Bearing\", \"Interest-Free\".\nPut your detailed description of the post in the description field, which should show the features of the post to attract other users to match. Most importantly, don't leak any user information!\n";
 
+    // check the post before submission
     const checkPost = async () => {
         setState(prevState => ({ ...prevState, isLoading: true }));
         try {
-            const response = await axios.post(config.proxy.common, {
+            const infoOrgResponse = await axios.post(config.proxy.common, {
                 type: "get_user_info",
                 content: [
                     "income",
@@ -54,60 +57,60 @@ const PostInterface = ({ post_type, goBack }) => {
                 ],
                 extra: null
             });
-            if (response.success) {
+            const infoResponse = infoOrgResponse.data;
+            if (infoResponse.success) {
                 const { income, no_of_dependents, graduated, self_employed, residential_assets_value,
                     commercial_assets_value, luxury_assets_value, bank_asset_value
-                } = response.content;
+                } = infoResponse.content;
                 const { amount, period } = state;
                 let score = 0.5, income_annum = income * 12, total_assets = residential_assets_value + commercial_assets_value + luxury_assets_value + bank_asset_value, years = period / 12;
-                axios.post(config.proxy.common, {
+
+                const scoreOrgResponse = await axios.post(config.proxy.common, {
                     type: "estimate_score",
                     content: {},
                     extra: null
-                }, (response) => {
-                    if (response.success && response.content !== null)
-                        score = response.content.score;
-                    score = parseInt(score * 1000);
-                    if (post_type === 'lend') {
-                        if (amount > total_assets * 0.1)
-                            showWarning('The amount is over 10% of your assets.');
-                        else if (score < 700)
-                            showWarning('Your credit score is too low for the investment.');
+                });
+                if (scoreOrgResponse.data.success && scoreOrgResponse.data.content !== null)
+                    score = scoreOrgResponse.data.content.score;
+                score = parseInt(score * 1000);
+                if (post_type === 'lend') {
+                    if (amount > total_assets * 0.1)
+                        showWarning('The amount is over 10% of your assets.');
+                    else if (score < 700)
+                        showWarning('Your credit score is too low for the investment.');
+                    else
+                        handleSubmit();
+                }
+                else {
+                    let info = {
+                        income_annum, no_of_dependents, graduated, self_employed,
+                        residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value,
+                        loan_amount: amount, loan_term: years, cibil_score: score
+                    };
+                    for (const key in info)
+                        if (info[key] === null)
+                            info[key] = 0;
+                    if (info.graduated === 0) info.graduated = false;
+                    if (info.self_employed === 0) info.self_employed = false;
+
+                    const orgResponse = await axios.post(config.proxy.common, {
+                        type: "borrow_post_estimate_score",
+                        content: info,
+                        extra: null
+                    });
+                    const response = orgResponse.data;
+                    if (response.success && response.content !== null) {
+                        if (response.content.score < 0.7)
+                            showWarning('The estimated score is too low for the loan.');
                         else
                             handleSubmit();
                     }
-                    else {
-                        let info = {
-                            income_annum, no_of_dependents, graduated, self_employed,
-                            residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value,
-                            loan_amount: amount, loan_term: years, cibil_score: score
-                        };
-                        for (const key in info)
-                            if (info[key] === null)
-                                info[key] = 0;
-                        if (info.graduated === 0) info.graduated = false;
-                        if (info.self_employed === 0) info.self_employed = false;
-                        axios.post(config.proxy.common, {
-                            type: "borrow_post_estimate_score",
-                            content: info,
-                            extra: null
-                        }, (response) => {
-                            if (response.success && response.content !== null) {
-                                if (response.content.score < 0.7)
-                                    showWarning('The estimated score is too low for the loan.');
-                                else
-                                    handleSubmit();
-                            }
-                            else
-                                handleSubmit();
-                        });
-                    }
-                });
+                    else
+                        throw new Error("Failed to estimate the score.");
+                }
             }
-            else {
-                console.error(response.message);
-                setState(prevState => ({ ...prevState, isLoading: false }));
-            }
+            else
+                throw new Error("Failed to get user information.");
         } catch (error) {
             console.error(error);
             setState(prevState => ({ ...prevState, isLoading: false }));
@@ -115,7 +118,7 @@ const PostInterface = ({ post_type, goBack }) => {
     };
 
     const showWarning = (message) => {
-        Alert.alert(
+        alert.alert(
             "Post Warning",
             message,
             [
@@ -135,10 +138,10 @@ const PostInterface = ({ post_type, goBack }) => {
         );
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const { poster, amount, interest, period, description, loanType, extra } = state;
         try {
-            const { poster, amount, interest, period, description, loanType, extra } = state;
-            axios.post(config.proxy.common, {
+            const orgResponse = await axios.post(config.proxy.common, {
                 type: "submit_market_post",
                 content: {
                     post_type: post_type,
@@ -146,38 +149,37 @@ const PostInterface = ({ post_type, goBack }) => {
                     poster, amount, interest, period, description, extra
                 },
                 extra: null
-            }, response => {
-                if (response.success) {
-                    setState(prevState => ({ ...prevState, isSubmitted: true, isLoading: false }));
-                    Alert('Investment details submitted successfully.');
-                } else {
-                    Alert('Failed to submit investment details.');
-                    setState(prevState => ({ ...prevState, isLoading: false }));
-                }
             });
+            const response = orgResponse.data;
+            if (response.success) {
+                setState(prevState => ({ ...prevState, isSubmitted: true, isLoading: false }));
+                alert('Investment details submitted successfully.');
+            }
+            else
+                throw new Error("Failed to submit investment details.");
         } catch (error) {
-            console.error(error);
+            alert('Failed to submit investment details.');
             setState(prevState => ({ ...prevState, isLoading: false }));
         }
     };
 
-    const pickExtra = (image) => {
-        setState(prevState => ({ ...prevState, extra: image }));
-    };
-
-    const askAdvice = (text) => {
+    const askAdvice = async (text) => {
         setState(prevState => ({ ...prevState, isLoading: true, modalVisible: false }));
+        // refine prompt for the user to get advice from GPT
         let prompt_all = prompt;
         if (!(text === null || text.trim() === ''))
             prompt_all += "The user's addition request is: " + text + "\n";
         prompt_all += "Please give your advice for his " + post_type + " post.\n" +
             "His information is listed below:\n";
-        axios.post(config.proxy.common, {
-            type: "send_single_message_to_bot",
-            content: prompt_all,
-            extra: null
-        }, response => {
+
+        try {
+            const orgResponse = await axios.post(config.proxy.common, {
+                type: "send_single_message_to_bot",
+                content: prompt_all,
+                extra: null
+            });
             setState(prevState => ({ ...prevState, isLoading: false }));
+            const response = orgResponse.data;
             if (response.success && response.content !== null) {
                 const advice = JSON.parse(response.content);
                 setState(prevState => ({
@@ -188,12 +190,17 @@ const PostInterface = ({ post_type, goBack }) => {
                 amountRef.current?.changeInitialValue(advice.amount.toString());
                 periodRef.current?.changeInitialValue(advice.period.toString());
                 interestRef.current?.changeInitialValue(advice.interest.toString());
-                Alert('Advice requested successfully.');
-            } else {
-                Alert('Failed to request advice.');
-            }
+                alert('Advice requested successfully.');
+            } else
+                throw new Error("Failed to request advice.");
+        } catch (error) {
+            alert('Failed to request advice.');
+            setState(prevState => ({ ...prevState, isLoading: false }));
         }
-        );
+    };
+
+    const pickExtra = (image) => {
+        setState(prevState => ({ ...prevState, extra: image }));
     };
 
     return (

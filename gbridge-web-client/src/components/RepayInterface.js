@@ -11,26 +11,27 @@ const RepaymentInterface = ({ loanDetail, goBack }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
-    const initiatePaymentProcess = () => {
+    const initiatePaymentProcess = async () => {
         setIsLoading(true);
-        axios.post(config.proxy.common, {
-            type: "complete_deal",
-            content: {
-                _id: loanDetail._id,
-                paymentMethod: selectedPaymentMethod
-            }
-        }, response => {
+        try {
+            const response = await axios.post(config.proxy.common, {
+                type: "complete_deal",
+                content: {
+                    _id: loanDetail._id,
+                    paymentMethod: selectedPaymentMethod
+                }
+            });
             setIsLoading(false);
-            if (response.success) {
+            if (response.data.success) {
                 alert('Payment successful.');
                 goBack(true);
-            } else {
-                alert('Payment failed. Please try again.');
-            }
-        }).catch(() => {
-            setIsLoading(false);
+            } else
+                throw new Error();
+        }
+        catch (error) {
             alert('Payment failed. Please try again.');
-        });
+            setIsLoading(false);
+        }
     };
 
     return (

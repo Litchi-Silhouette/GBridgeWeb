@@ -5,8 +5,8 @@ import Modal from 'react-modal';
 import styles from './ImageCropModal.module.css';
 import { TwoButtonsInline, TextButton } from './MyButton';
 import config from '../config/config.json';
-import DefaultUserIcon from '../assets/default_user_icon.png';
 
+// upload image
 const ImagePicker = ({ onConfirm }) => {
     const pickCropImage = () => {
         const input = document.createElement('input');
@@ -28,17 +28,19 @@ const ImagePicker = ({ onConfirm }) => {
     );
 }
 
+// upload image and crop, use in portrait
 const ImageCropModal = ({ onConfirm, icon }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [src, setSrc] = useState(null);
+    const [croppedImageUrl, setCroppedImageUrl] = useState(null);
+    const imageRef = useRef(null);
+    // set crop configuration
     const [crop, setCrop] = useState({
         unit: 'px',
         height: config.userIcon.height,
         width: config.userIcon.width,
         aspect: 1
     });
-    const [croppedImageUrl, setCroppedImageUrl] = useState(null);
-    const imageRef = useRef(null);
 
     const pickCropImage = () => {
         const input = document.createElement('input');
@@ -74,6 +76,7 @@ const ImageCropModal = ({ onConfirm, icon }) => {
         }
     };
 
+    // get cropped image, resize to my size
     const getCroppedImg = (image, crop) => {
         const canvas = document.createElement('canvas');
         const scaleX = image.naturalWidth / image.width;

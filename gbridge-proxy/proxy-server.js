@@ -6,6 +6,7 @@ import net from 'net';
 import cors from 'cors';
 import config from './config/config.json' assert { type: 'json' };
 
+// using express architecture 
 const app = express();
 const PORT = config.proxy.port;
 const TCP_SERVER_PORT = config.server.port;
@@ -17,20 +18,20 @@ const retryDelay = config.server.retryDelay;
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: config.client.url, // Allow the client to connect
-  credentials: true, // If you need to include cookies in requests
+  origin: config.client.url,
+  credentials: true,
 }));
 
 // Session middleware
 app.use(session({
   genid: () => uuidv4(), // Generate a unique session ID
-  secret: 'your-secret-key', // Replace with your own secret
+  secret: 'gBridgeProxyKey',
   resave: false,
   saveUninitialized: true,
   cookie: {
     maxAge: 30 * 60 * 1000, // Session expires after 30 minutes of inactivity
-    secure: false, // Set to true if using HTTPS
-    httpOnly: true, // Helps to prevent attacks such as cross-site scripting
+    secure: false,
+    httpOnly: true,
     sameSite: 'lax',
   },
 }));
@@ -38,6 +39,7 @@ app.use(session({
 // Object to store TCP connections and response handlers
 const userConnections = {};
 
+// create a tcp connection
 const handleTcpConnection = async (sessionId) => {
   const tcpClient = new net.Socket();
   userConnections[sessionId].client = tcpClient;
@@ -49,20 +51,17 @@ const handleTcpConnection = async (sessionId) => {
   });
 
   tcpClient.on('data', (data) => {
+    // Append the received data to the buffer
     let dataBuffer = userConnections[sessionId].dataBuffer;
     dataBuffer += data.toString();
     console.log('Received data:', dataBuffer);
-    const adviser_success = '{"type":"adviser_login","status":200}';
-    const i = dataBuffer.indexOf(adviser_success);
-    if (i !== -1)
-      dataBuffer = dataBuffer.slice(i + adviser_success.length);
-
     userConnections[sessionId].dataBuffer = dataBuffer;
+
     let jsonResponse;
     try {
       jsonResponse = JSON.parse(dataBuffer);
       console.log('Received:', jsonResponse);
-      userConnections[sessionId].dataBuffer = ''; // Clear the buffer
+      userConnections[sessionId].dataBuffer = '';
 
       if (jsonResponse.status !== 200)
         jsonResponse.success = false;
@@ -79,10 +78,11 @@ const handleTcpConnection = async (sessionId) => {
     const responseHandler = userConnections[sessionId].handlers[type];
     if (responseHandler) {
       responseHandler(jsonResponse);
-      delete userConnections[sessionId].handlers[type]; // Clean up handler
+      delete userConnections[sessionId].handlers[type];
     }
   });
 
+  // reconnect if connection is lost
   tcpClient.on('error', (err) => {
     console.error('TCP Connection Error: ', err);
     tcpClient.destroy();
@@ -106,6 +106,7 @@ const handleTcpConnection = async (sessionId) => {
     }
   });
 
+  // close the connection and remove the handler
   tcpClient.on('close', () => {
     console.log(`TCP connection closed for session ID: ${sessionId}`);
     if (userConnections[sessionId] && userConnections[sessionId].handler)
@@ -119,6 +120,7 @@ const handleTcpConnection = async (sessionId) => {
   });
 }
 
+// handle the tcp request
 const handleTcpRequest = async (sessionId, requestBody, requestType, res) => {
   if (!userConnections[sessionId])
     userConnections[sessionId] = {
@@ -142,6 +144,7 @@ const handleTcpRequest = async (sessionId, requestBody, requestType, res) => {
   tcpClient.write(JSON.stringify(requestBody));
 };
 
+// handle the common request
 app.post('/api/common', (req, res) => {
   const sessionId = req.sessionID;
   const requestBody = req.body;
@@ -150,6 +153,7 @@ app.post('/api/common', (req, res) => {
   handleTcpRequest(sessionId, requestBody, requestType, res);
 });
 
+// handle the logout request, delete session and cookie
 app.post('/api/logout', (req, res) => {
   const sessionId = req.sessionID;
   if (userConnections[sessionId] && userConnections[sessionId].client)
@@ -159,7 +163,7 @@ app.post('/api/logout', (req, res) => {
     if (err) {
       return res.status(500).send({ success: false, message: 'Logout failed' });
     }
-    res.clearCookie('connect.sid', { path: '/' }); // Adjust the cookie name if different
+    res.clearCookie('connect.sid', { path: '/' });
     return res.send({ success: true, message: 'Logged out successfully' });
   });
 });
@@ -183,7 +187,7 @@ const server = app.listen(PORT, () => {
   console.log(`Proxy server listening on port ${PORT}`);
 });
 
-// Function to gracefully shut down the server
+// gracefully shut down the server
 const gracefulShutdown = () => {
   console.log('Received SIGINT. Shutting down gracefully...');
 

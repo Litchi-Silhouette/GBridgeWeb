@@ -7,6 +7,7 @@ import gBridgeIcon from '../assets/launch_screen.png';
 import { resetInfo } from '../store/globalSlice';
 import { useAxios } from '../utils/AxiosContext';
 
+// title navigation bar
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,9 +21,8 @@ const Header = () => {
                 resetInfo(); // Reset global state
                 console.log('User logged out');
                 navigate('/', { replace: true });
-            } else {
-                console.error('Logout failed:', response.data.message);
-            }
+            } else
+                throw new Error('Failed to logout');
         } catch (error) {
             console.error('Error during logout:', error);
         }

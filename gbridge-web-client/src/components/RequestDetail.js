@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 const RequestDetail = ({ visible, onRequestClose, request, onActionPress, market }) => {
     const gUsername = useSelector((state) => state.global.username);
 
+    // return the button component based on the request status
     const getActionButton = () => {
         if (market) {
             return (

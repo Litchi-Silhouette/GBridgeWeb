@@ -40,7 +40,6 @@
     border-radius: 5px;
 }
 
-/* InputStyles.css */
 .container {
     display: flex;
     flex-direction: row;
@@ -60,14 +59,12 @@
     padding: 10px;
     padding-right: 0;
     border-radius: 5px;
-    /* Allow space for the check mark or cross */
     width: 100%;
     box-sizing: border-box;
 }
 
 .inputInvalid {
     border-color: red;
-    /* Highlight the border in red if invalid */
 }
 
 .validIndicator {

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './UserRequests.module.css'; // Import CSS module
 import Header from '../components/Header';
 import CartInterface from '../components/Cart';
 import PostInterface from '../components/PostInterface';
@@ -20,11 +19,24 @@ const UserRequests = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <div style={styles.container}>
             <Header />
             {renderBody()}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "10px",
+        paddingTop: "70px",
+        width: "100%",
+        height: "100vh",
+        boxSizing: "border-box",
+    }
 };
 
 export default UserRequests;

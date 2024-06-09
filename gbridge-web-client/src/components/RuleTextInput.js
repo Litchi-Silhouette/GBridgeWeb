@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styles from './RuleTextInput.module.css';
 
+// check is regex test function
 const UsernameInput = (props) => (
     <RuleTextInput
         {...props}
         rules="Username must be 4-10 characters long and contain only letters, numbers, and underscores"
         check={(username) => {
             if (props.allowEmpty && username === '') return true;
-            // Regex to match 4-10 alphanumeric characters or underscores
             const regex = /^[A-Za-z0-9_]{4,10}$/;
             return regex.test(username);
         }}
@@ -20,7 +20,6 @@ const PasswordInput = (props) => (
         rules="Password must be 6-12 characters long"
         check={(password) => {
             if (props.allowEmpty && password === '') return true;
-            // Regex to match 6-12 characters
             const regex = /^.{6,12}$/;
             return regex.test(password);
         }}

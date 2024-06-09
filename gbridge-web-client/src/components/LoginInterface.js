@@ -50,6 +50,7 @@ const LoginInterface = () => {
     };
   }, [dispatch]);
 
+  // get basic user info
   const updateUserInfo = async () => {
     try {
       const response = await axios.post(config.proxy.common, {
@@ -90,6 +91,7 @@ const LoginInterface = () => {
     }
   };
 
+  // handle four types of login
   const handleLogin = async () => {
     let email = `${emailName}@${emailDomain}`;
     let type = '';
@@ -132,6 +134,7 @@ const LoginInterface = () => {
     }
   };
 
+  // send verification code
   const sendVerificationCode = async () => {
     let email = `${emailName}@${emailDomain}`;
     let content = {};

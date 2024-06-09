@@ -1,8 +1,6 @@
-/* src/screens/RequestDetail.module.css */
 .modal {
     display: flex;
     flex-direction: column;
-    /* Allows modal content to flow vertically */
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -36,7 +34,6 @@
     align-items: center;
     width: 100%;
     overflow: hidden;
-    /* Enables vertical scrolling if content exceeds modal height */
     flex-grow: 1;
 }
 

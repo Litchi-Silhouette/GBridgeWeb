@@ -3,9 +3,12 @@ import Modal from 'react-modal';
 import { SingleButton } from './MyButton';
 import styles from './InputModal.module.css';
 
-Modal.setAppElement('#root'); // Set the root element for accessibility
+Modal.setAppElement('#root');
 
-const InputModal = ({ modalVisible, onConfirm, onRequestClose, title, placeholder, multiline, canNone }) => {
+// an input modal for user to input text
+// can be used for user input, remind, etc.
+const InputModal = ({ modalVisible, onConfirm, onRequestClose, title,
+    placeholder, multiline, canNone }) => {
     const [inputText, setInputText] = useState('');
 
     return (

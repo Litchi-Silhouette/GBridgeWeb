@@ -41,6 +41,8 @@ export const globalSlice = createSlice({
     },
 });
 
-export const { setAuthenticated, setCredentials, setPortrait, setSaveAccount, toggleSaveAccount, setToken, resetInfo } = globalSlice.actions;
+export const { setAuthenticated, setCredentials, setPortrait,
+    setSaveAccount, toggleSaveAccount, setToken, resetInfo
+} = globalSlice.actions;
 
 export default globalSlice.reducer;

@@ -1,38 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './MyButton.module.css';
-import BellIcon from '../assets/bell.png';
-import InputModal from './InputModal';
 
-const IPSetting = () => {
-    const [visibility, setVisibility] = useState(false);
-
-    return (
-        <button onClick={() => setVisibility(true)} className={styles.ipButton}>
-            <InputModal modalVisible={visibility} onConfirm={(text) => {
-                console.log(text);
-                global.host = text.trim();
-                setVisibility(false);
-            }} onRequestClose={() => setVisibility(false)}
-                title={"Enter server IP:"}
-                placeholder={global.host}
-            />
-        </button>
-    );
-};
-
-const IconButton = ({ onPress, image, selected }) => {
-    return (
-        <button onClick={onPress} className={[styles.iconButton, selected ? styles.selected : ''].join(' ')}>
-            <img src={image} alt="icon" className={styles.iconImage} />
-        </button>
-    );
-};
-
-const NotificationButton = ({ onPress }) => {
-    return (
-        <IconButton onPress={onPress} image={BellIcon} />
-    );
-};
+// custom button components
 
 const MyButton = ({ title, onPress, disable }) => {
     return (
@@ -69,4 +38,4 @@ const TextButton = ({ title, onPress }) => {
     );
 };
 
-export { MyButton, TwoButtonsInline, SingleButton, IPSetting, NotificationButton, TextButton };
+export { MyButton, TwoButtonsInline, SingleButton, TextButton };

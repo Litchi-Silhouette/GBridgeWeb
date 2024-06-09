@@ -1,18 +1,17 @@
-// src/screens/Home.js
 import React, { useState, useEffect } from 'react';
 import { useAxios } from '../utils/AxiosContext';
-import { differenceInDays, addDays, set } from 'date-fns';
-import parseItems from '../utils/ParseItem';// Import the CSS module
+import { differenceInDays, addDays } from 'date-fns';
+import parseItems from '../utils/ParseItem';
 import { useSelector } from 'react-redux';
 import config from '../config/config.json';
 import Header from '../components/Header';
 import styles from './Home.module.css';
 import Spinner from '../components/Spinner';
-import { useNavigate } from 'react-router-dom';
 import TextAnimation from '../components/TextAnimation';
 import RepaymentInterface from '../components/RepayInterface';
 import DefaultUserIcon from '../assets/default_user_icon.png';
 
+// score ring component
 const ProgressRing = ({ radius, stroke, progress, color }) => {
   const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
@@ -46,7 +45,7 @@ const ProgressRing = ({ radius, stroke, progress, color }) => {
         r={normalizedRadius}
         cx={radius}
         cy={radius}
-        style={{ transition: 'stroke-dashoffset 3s ease-in-out' }} // Slowed down transition
+        style={{ transition: 'stroke-dashoffset 2s ease-in-out' }}
       />
     </svg>
   );
@@ -61,7 +60,6 @@ const Home = () => {
   const [progress, setProgress] = useState(0.5);
   const [color, setColor] = useState("rgba(0, 123, 255, 1)");
   const axios = useAxios();
-  const navigate = useNavigate();
 
   const gUsername = useSelector(state => state.global.username);
   const gUserIcon = useSelector(state => state.global.portrait);
@@ -98,9 +96,8 @@ const Home = () => {
         color.g = Math.floor((1 - score) * red.g + score * blue.g);
         color.b = Math.floor((1 - score) * red.b + score * blue.b);
         setColor(`rgba(${color.r}, ${color.g}, ${color.b}, 1)`);
-      } else {
-        alert("Failed to retrieve score details.");
-      }
+      } else
+        throw new Error();
     } catch {
       alert("Failed to retrieve score details.");
     }
@@ -120,9 +117,8 @@ const Home = () => {
         setMessages(fetchedMessages);
         setLoading(false);
         console.log('Fetched messages');
-      } else {
-        alert('Failed to fetch messages.');
-      }
+      } else
+        throw new Error();
     } catch {
       alert('Failed to fetch messages.');
     }
@@ -148,33 +144,31 @@ const Home = () => {
         setLoans(loanDeals);
         fetchMessages();
         console.log('Fetched posts and deals');
-      } else {
-        alert('Failed to fetch deals.');
-        setLoading(false);
-      }
+      } else
+        throw new Error();
     } catch {
       alert('Failed to fetch deals.');
       setLoading(false);
     }
   };
 
-  const confirmReading = (item) => {
+  const confirmReading = async (item) => {
     if (window.confirm("You make sure you have received the notification?")) {
-      axios.post(config.proxy.common, {
-        type: "delete_notification",
-        content: {
-          _id: item._id
-        }
-      }).then((response) => {
+      try {
+        const response = await axios.post(config.proxy.common, {
+          type: "delete_notification",
+          content: {
+            _id: item._id
+          }
+        });
         if (response.data.success) {
           console.log("Deleted notification");
           fetchMessages();
-        } else {
-          alert('Failed to delete message.');
-        }
-      }).catch(() => {
+        } else
+          throw new Error();
+      } catch {
         alert('Failed to delete message.');
-      });
+      }
     }
   };
 
@@ -183,6 +177,7 @@ const Home = () => {
     setView('repayment');
   };
 
+  // render functions
   const renderLoan = (loan) => (
     <div className={styles.itemContainer} onClick={() => navigateToRepayment(loan)}>
       <p style={{ padding: 0, margin: 0 }}>Amount: {loan.amount} Due: {loan.dueDate}</p>

@@ -1,6 +1,4 @@
-// src/screens/WelcomeInterface.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { SingleButton } from '../components/MyButton';
 import TextAnimation from '../components/TextAnimation';
 import LoginInterface from '../components/LoginInterface';
@@ -8,7 +6,6 @@ import RegisterInterface from '../components/RegisterInterface';
 import './WelcomeInterface.css';
 
 const WelcomeInterface = () => {
-    const navigate = useNavigate();
     const [view, setView] = useState('welcome'); // 'welcome', 'login', or 'register'
     const handleLoginPress = () => {
         setView('login');

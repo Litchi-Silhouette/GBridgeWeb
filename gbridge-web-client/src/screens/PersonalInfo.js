@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAxios } from '../utils/AxiosContext';
 import DefaultUserIcon from '../assets/default_user_icon.png';
 import { TwoButtonsInline } from '../components/MyButton';
-import styles from './PersonalInfo.module.css'; // Import the CSS module
+import styles from './PersonalInfo.module.css';
 import { useSelector } from 'react-redux';
 import Spinner from '../components/Spinner';
 import { NumberInput, YesNoChoice } from '../components/InfoInputs';
@@ -29,18 +29,43 @@ const PersonalInfo = () => {
         commercial_assets_value: 0,
         luxury_assets_value: 0,
         bank_asset_value: 0,
-        loading: true,  // Initial state for loading
+        loading: true,
         isLoading: false,
     });
+    const { email, newIcon, cash, loading, income, expenditure, debt, assets, no_of_dependents, graduated, self_employed, residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value, isLoading } = state;
+
     const [realName, setRealName] = useState('');
     const [idNumber, setIdNumber] = useState('');
     const [verificationStatus, setVerificationStatus] = useState('');
-    const [view, setView] = useState('info');  // ['info', 'verification', 'modification'
+    const [view, setView] = useState('info');  // 'info', 'verification', 'modification'
     const username = useSelector(state => state.global.username);
     const userIcon = useSelector(state => state.global.portrait);
     const verified = useSelector(state => state.global.authenticated);
     const dispatch = useDispatch();
     const axios = useAxios();
+
+    useEffect(() => {
+        fetchUserData();
+    }, []);
+
+    const handleVerificationPress = () => {
+        setView('verification');
+    };
+
+    const handleModificationPress = () => {
+        setView('modification');
+    };
+
+    const setImage = (image) => {
+        setState(prevState => ({ ...prevState, newIcon: image }));
+    };
+
+    const clearIDAndBack = () => {
+        setRealName('');
+        setIdNumber('');
+        setVerificationStatus('');
+        setView('info');
+    };
 
     const fetchUserData = async () => {
         setState(prevState => ({ ...prevState, loading: true }));
@@ -81,32 +106,15 @@ const PersonalInfo = () => {
                     commercial_assets_value,
                     luxury_assets_value,
                     bank_asset_value,
-                    loading: false  // Stop the loading indicator
+                    loading: false
                 });
-            } else {
-                alert("Failed to fetch user data.");
-                setState(prevState => ({ ...prevState, loading: false }));
-            }
+            } else
+                throw new Error();
         } catch (error) {
             alert("Failed to fetch user data.");
             setState(prevState => ({ ...prevState, loading: false }));
         }
     };
-
-    useEffect(() => {
-        console.log('PersonalInfo mounted');
-        fetchUserData();
-    }, []);
-
-    const handleVerificationPress = () => {
-        setView('verification');
-    };
-
-    const handleModificationPress = () => {
-        setView('modification');
-    };
-
-    const { email, newIcon, cash, loading, income, expenditure, debt, assets, no_of_dependents, graduated, self_employed, residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value, isLoading } = state;
 
     const handleModification = async () => {
         if ((cash !== null && income !== null && expenditure !== null && debt !== null && assets !== null && no_of_dependents !== null && graduated !== null && self_employed !== null && residential_assets_value !== null && commercial_assets_value !== null && luxury_assets_value !== null && bank_asset_value !== null) || newIcon) {
@@ -144,9 +152,8 @@ const PersonalInfo = () => {
                         setState(prevState => ({ ...prevState, newIcon: null }));
                     }
                     alert('Profile updated successfully!');
-                } else {
-                    alert('Failed to update profile.');
-                }
+                } else
+                    throw new Error();
             } catch (error) {
                 alert('Failed to update profile.');
                 setState(prevState => ({ ...prevState, isLoading: false }));
@@ -156,46 +163,31 @@ const PersonalInfo = () => {
         }
     };
 
-    const setImage = (image) => {
-        setState(prevState => ({ ...prevState, newIcon: image }));
-    };
-
-    const clearIDAndBack = () => {
-        setRealName('');
-        setIdNumber('');
-        setVerificationStatus('');
-        setView('info');
-    };
-
-    const uploadIDDocuments = () => {
+    const uploadIDDocuments = async () => {
         if (!realName || !idNumber) {
             alert("Error: All fields are required!");
             return;
         }
         setVerificationStatus('Verification in progress...');
-
-        axios.post(config.proxy.common, {
-            type: "update_user_info",
-            content: { authenticated: true },
-            extra: { name: realName, idNumber: idNumber },
-        })
-            .then(response => {
-                if (response.data.success) {
-                    alert('Verification successful!');
-                    dispatch(setAuthenticated(true));
-                    setVerificationStatus('Verification successful!');
-                } else {
-                    alert('Verification failed. Please try again.');
-                    setVerificationStatus('Verification failed. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Verification failed: ', error);
-                alert('Verification failed. Please try again.');
-                setVerificationStatus('Verification failed. Please try again.');
+        try {
+            const response = await axios.post(config.proxy.common, {
+                type: "update_user_info",
+                content: { authenticated: true },
+                extra: { name: realName, idNumber: idNumber },
             });
+            if (response.data.success) {
+                alert('Verification successful!');
+                dispatch(setAuthenticated(true));
+                setVerificationStatus('Verification successful!');
+            } else
+                throw new Error();
+        } catch (error) {
+            alert('Verification failed. Please try again.');
+            setVerificationStatus('Verification failed. Please try again.');
+        }
     };
 
+    // render functions
     const renderInfo = () => {
         if (loading)
             return (

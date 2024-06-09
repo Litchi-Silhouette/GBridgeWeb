@@ -33,9 +33,8 @@ const ScoreInterface = () => {
                 setScore(response.data.content.score);
                 setLoadingScore(false);
                 getInfo();
-            } else {
-                alert("Failed to retrieve score details.");
-            }
+            } else
+                throw new Error();
         } catch (error) {
             alert("Failed to retrieve score details.");
         }
@@ -65,9 +64,8 @@ const ScoreInterface = () => {
             if (response.data.success) {
                 setInfo(response.data.content);
                 setLoadingInfo(false);
-            } else {
-                alert("Failed to retrieve user information.");
-            }
+            } else
+                throw new Error();
         } catch (error) {
             alert("Failed to retrieve user information.");
         }
@@ -85,12 +83,11 @@ const ScoreInterface = () => {
             if (response.data.success) {
                 setSuggestion(response.data.content);
                 setLoadingSuggestions(false);
-            } else {
-                alert("Failed to retrieve suggestions.");
-                setLoadingSuggestions(false);
-            }
+            } else
+                throw new Error();
         } catch (error) {
             alert("Failed to retrieve suggestions.");
+            setLoadingSuggestions(false);
         }
     };
 

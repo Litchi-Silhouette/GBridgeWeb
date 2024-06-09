@@ -2,6 +2,8 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import styles from './InfoInputs.module.css';
 import { MyButton } from './MyButton';
 
+//different custom input components
+
 const VerificationCodeInput = ({ onSendCode, onCodeChange, disabled }) => {
     return (
         <div className={styles.codeContainer}>

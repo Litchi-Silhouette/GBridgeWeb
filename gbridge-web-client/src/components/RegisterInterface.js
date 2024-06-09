@@ -63,22 +63,23 @@ const RegisterInterface = () => {
         }
     };
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if (password !== passwordConfirm) {
             alert('Passwords do not match');
         } else if (emailName && emailDomain && verificationCode && password && username) {
             dispatch(registerRequest());
             const email = `${emailName}@${emailDomain}`;
-            axios.post(config.proxy.common, {
-                type: "register",
-                content: {
-                    email: email,
-                    verificationcode: verificationCode,
-                    password: password,
-                    username: username
-                },
-                extra: null
-            }).then((response) => {
+            try {
+                const response = await axios.post(config.proxy.common, {
+                    type: "register",
+                    content: {
+                        email: email,
+                        verificationcode: verificationCode,
+                        password: password,
+                        username: username
+                    },
+                    extra: null
+                });
                 if (response.data.success) {
                     dispatch(registerSuccess(response.data.content));
                     dispatch(setCredentials({ username, password }));
@@ -86,9 +87,9 @@ const RegisterInterface = () => {
                 } else {
                     dispatch(registerFailure('Failed to register. Please try again.'));
                 }
-            }).catch((error) => {
+            } catch (error) {
                 dispatch(registerFailure('Failed to register. Please try again.'));
-            });
+            }
         } else {
             alert('Please fill in all fields');
         }

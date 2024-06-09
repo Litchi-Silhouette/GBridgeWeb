@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAxios } from '../utils/AxiosContext';
-import Modal from 'react-modal';
 import { MultiSelect } from 'react-multi-select-component';
 import styles from './MarketComponent.module.css';
-import { TwoButtonsInline } from '../components/MyButton';
 import parseItem from '../utils/ParseItem';
 import InputModal from '../components/InputModal';
 import Spinner from '../components/Spinner';
@@ -30,6 +28,31 @@ const MarketComponent = () => {
         fetchItems();
     }, [selectedFilters, type]);
 
+    // control flow
+    const switchTab = (tab) => {
+        if (tab !== type) {
+            setType(tab);
+        }
+    };
+
+    const handleItemPress = (item) => {
+        setSelectedItem(item);
+        setShowModal(true);
+    };
+
+    const closeDialog = () => {
+        setShowModal(false);
+        setSelectedItem(null);
+    };
+
+    const handleMatch = () => {
+        setInputModalVisible(true);
+    };
+
+    const closeInputModal = () => {
+        setInputModalVisible(false);
+    };
+
     const fetchItems = async () => {
         setLoading(true);
         setItems([]);
@@ -52,28 +75,12 @@ const MarketComponent = () => {
                 if (!response.data.content) return;
                 setItems(parseItem(response.data.content).sort((a, b) => b.score - a.score));
                 setLoading(false);
-            } else {
-                alert("Failed to fetch market items.");
-                setLoading(false);
-            }
+            } else
+                throw new Error();
         } catch (error) {
             alert("Failed to fetch market items.");
             setLoading(false);
         }
-    };
-
-    const handleItemPress = (item) => {
-        setSelectedItem(item);
-        setShowModal(true);
-    };
-
-    const closeDialog = () => {
-        setShowModal(false);
-        setSelectedItem(null);
-    };
-
-    const handleMatch = () => {
-        setInputModalVisible(true);
     };
 
     const handlePost = async (name) => {
@@ -93,19 +100,15 @@ const MarketComponent = () => {
                     closeInputModal();
                     closeDialog();
                     fetchItems();
-                } else {
-                    alert("Failed to make deal.");
-                }
+                } else
+                    throw new Error();
             } catch (error) {
                 alert("Failed to make deal.");
             }
         }
     };
 
-    const closeInputModal = () => {
-        setInputModalVisible(false);
-    };
-
+    // render functions
     const renderItem = (item) => (
         <div className={styles.itemContainer} onClick={() => handleItemPress(item)}>
             <p className={styles.itemText}>{item.poster} - {parseFloat(item.score).toFixed(3)} - {item.interest} - {item.amount} - {item.period}</p>
@@ -117,12 +120,6 @@ const MarketComponent = () => {
             {loading ? <Spinner size="large" /> : <p>No items available</p>}
         </div>
     );
-
-    const switchTab = (tab) => {
-        if (tab !== type) {
-            setType(tab);
-        }
-    };
 
     return (
         <div className={styles.container}>

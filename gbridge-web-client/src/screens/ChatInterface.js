@@ -79,6 +79,7 @@ const ChatInterface = forwardRef((props, ref) => {
         props.forwardMessage(inputText);
     };
 
+    // Render a message item  
     const renderMessageItem = (item) => {
         const isUser = item.user !== props.opp;
         let icon = isUser ? (userIcon || DefaultUserIcon) : DefaultOppIcon;
@@ -149,24 +150,27 @@ const BotChatInterface = () => {
     const chatRef = useRef(null);
 
     const forwardMessage = async (inputText) => {
-        const orgResponse = await axios.post(config.proxy.common, {
-            type: "send_message_to_bot",
-            content: inputText
-        });
-        const response = orgResponse.data;
-        if (response.success) {
-            const currentTime = new Date();
-            const newResponse = {
-                id: messages.length + 1,
-                date: currentTime.toLocaleDateString(),
-                time: currentTime.toLocaleTimeString(),
-                text: response.content,
-                user: "Bot"
-            };
+        try {
+            const orgResponse = await axios.post(config.proxy.common, {
+                type: "send_message_to_bot",
+                content: inputText
+            });
+            const response = orgResponse.data;
+            if (response.success) {
+                const currentTime = new Date();
+                const newResponse = {
+                    id: messages.length + 1,
+                    date: currentTime.toLocaleDateString(),
+                    time: currentTime.toLocaleTimeString(),
+                    text: response.content,
+                    user: "Bot"
+                };
 
-            setMessages(prevMessages => [...prevMessages, newResponse]);
-            chatRef.current?.scrollToEnd(true);
-        } else {
+                setMessages(prevMessages => [...prevMessages, newResponse]);
+                setTimeout(() => chatRef.current?.scrollToEnd(true), 100);
+            } else
+                throw new Error();
+        } catch (error) {
             alert("Failed to send message.");
         }
         setIsLoading(false);
@@ -209,44 +213,48 @@ const AdviserChatInterface = () => {
         };
     }, []);
 
-
-
     const fetchAdvisorMessages = async () => {
         if (isLoading) return;
-        const orgResponse = await axios.post(config.proxy.common, {
-            type: "get_adviser_conversation"
-        })
-        const response = orgResponse.data;
-        if (response.success) {
-            let length = messages.length;
-            setMessages(prevMessages => { length = prevMessages.length; return prevMessages });
-            console.log("fetched messages from adviser!", response.content.length, length);
-            if (response.content && response.content.length > length) {
-                const newMessages = response.content.slice(length).map((message, index) => {
-                    const timeAll = new Date(message.time);
-                    return {
-                        id: index + 1 + length,
-                        date: timeAll.toLocaleDateString(),
-                        time: timeAll.toLocaleTimeString(),
-                        text: message.msg,
-                        user: message.role === 'user' ? "You" : "Adviser"
-                    };
-                });
-                setMessages(prevMessages => [...prevMessages, ...newMessages]);
-                chatRef.current?.scrollToEnd();
-            }
-        } else
+        try {
+            const orgResponse = await axios.post(config.proxy.common, {
+                type: "get_adviser_conversation"
+            })
+            const response = orgResponse.data;
+            if (response.success) {
+                let length = messages.length;
+                setMessages(prevMessages => { length = prevMessages.length; return prevMessages });
+                if (response.content && response.content.length > length) {
+                    const newMessages = response.content.slice(length).map((message, index) => {
+                        const timeAll = new Date(message.time);
+                        return {
+                            id: index + 1 + length,
+                            date: timeAll.toLocaleDateString(),
+                            time: timeAll.toLocaleTimeString(),
+                            text: message.msg,
+                            user: message.role === 'user' ? "You" : "Adviser"
+                        };
+                    });
+                    setMessages(prevMessages => [...prevMessages, ...newMessages]);
+                    setTimeout(() => chatRef.current?.scrollToEnd(true), 100);
+                }
+            } else
+                throw new Error();
+        } catch (error) {
             alert("Failed to fetch messages from adviser.");
+        }
     };
 
     const forwardMessage = async (inputText) => {
-        const response = await axios.post(config.proxy.common, {
-            type: "send_message_to_adviser",
-            content: inputText
-        });
-        if (response.data.success) {
-            console.log("sent message to advisor!");
-        } else {
+        try {
+            const response = await axios.post(config.proxy.common, {
+                type: "send_message_to_adviser",
+                content: inputText
+            });
+            if (response.data.success)
+                console.log("sent message to advisor!");
+            else
+                throw new Error();
+        } catch (error) {
             alert("Failed to send message.");
         }
         setIsLoading(false);
@@ -267,4 +275,4 @@ const AdviserChatInterface = () => {
     );
 };
 
-export { BotChatInterface, AdviserChatInterface, ChatInterface };
+export { BotChatInterface, AdviserChatInterface };
