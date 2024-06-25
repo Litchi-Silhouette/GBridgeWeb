@@ -118,24 +118,9 @@ const PostInterface = ({ post_type, goBack }) => {
     };
 
     const showWarning = (message) => {
-        alert.alert(
-            "Post Warning",
-            message,
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => console.log("Submission canceled"),
-                    style: "cancel"
-                },
-                {
-                    text: "Continue",
-                    onPress: () => {
-                        handleSubmit();
-                    }
-                }
-            ],
-            { cancelable: false }
-        );
+        message += '\nDo you still want to submit the post?';
+        if (window.confirm(message))
+            handleSubmit();
     }
 
     const handleSubmit = async () => {

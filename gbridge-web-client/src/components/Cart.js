@@ -54,7 +54,6 @@ const CartInterface = ({ navigateToPost }) => {
 
     const handleReminderModalClose = () => {
         setReminderModal(false);
-        handleModalClose();
     };
 
     const handleActionPress = (actionType) => {
@@ -143,7 +142,6 @@ const CartInterface = ({ navigateToPost }) => {
 
     // Handle remind request
     const handleReminder = async (message) => {
-        const { selectedRequest } = this.state;
         try {
             const response = await axios.post(config.proxy.common, {
                 type: 'send_notification',
@@ -161,6 +159,7 @@ const CartInterface = ({ navigateToPost }) => {
             alert('Failed to send message.');
         }
         handleReminderModalClose();
+        handleModalClose();
     };
 
     // Render functions
@@ -233,7 +232,7 @@ const CartInterface = ({ navigateToPost }) => {
             )}
             {reminderModal && (
                 <InputModal
-                    visible={reminderModal}
+                    modalVisible={reminderModal}
                     multiline={true}
                     title={"Send message to " + selectedRequest.borrower}
                     placeholder="Enter your message here"
